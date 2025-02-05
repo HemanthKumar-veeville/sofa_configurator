@@ -1,0 +1,81 @@
+/* Main container for the background */
+.home-container {
+    position: relative;
+    width: 100%;
+    height: 100vh; /* Full screen height */
+    background-image: url('src/assets/BG.png'); /* Replace with your background image path */
+    background-size: cover; /* Ensure the image covers the container */
+    background-position: center; /* Center the image */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 10px; /* Padding for small screens */
+    box-sizing: border-box;
+  }
+  
+  /* Configure button styling */
+  .configure-button {
+    background-color: #333; /* Dark background for the button */
+    color: #fff; /* White text color */
+    font-size: 18px; /* Text size */
+    font-weight: bold;
+    padding: 12px 24px; /* Padding for the button */
+    border: none;
+    border-radius: 20px; /* Rounded corners */
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  }
+  
+  .configure-button:hover {
+    background-color: #555; /* Change background color on hover */
+  }
+  
+  /* SVG Arrow mark styling */
+  .arrow-mark {
+    margin-top: 115px; /* Space between the button and the arrow */
+    width: 24px; /* Arrow width */
+    margin-right: 6px;
+    height: auto; /* Maintain aspect ratio */
+  }
+  
+  /* Responsive design adjustments */
+  @media (max-width: 1024px) {
+    .configure-button {
+      font-size: 16px; /* Slightly smaller font size */
+      padding: 10px 20px; /* Adjust padding */
+    }
+  
+    .arrow-mark {
+      width: 22px; /* Adjust arrow size */
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .configure-button {
+      font-size: 14px; /* Smaller text size */
+      padding: 8px 16px; /* Adjust padding for small screens */
+    }
+  
+    .arrow-mark {
+      width: 20px; /* Smaller arrow size */
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .home-container {
+      padding: 5px; /* Less padding for very small screens */
+    }
+  
+    .configure-button {
+      font-size: 12px; /* Smallest text size */
+      padding: 6px 12px; /* Adjust button padding */
+    }
+  
+    .arrow-mark {
+      width: 18px; /* Smallest arrow size */
+    }
+  }
+  

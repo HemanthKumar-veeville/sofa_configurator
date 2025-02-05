@@ -1,0 +1,80 @@
+.elevator-controls {
+  position: absolute;
+  bottom: 8rem;
+  left: 15rem;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.view-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  width: 180px;
+  background: rgba(70, 70, 70, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.view-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background-color: rgba(50, 50, 50, 0.5);
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.9rem;
+  font-weight: 400;
+}
+
+.view-btn:hover {
+  background-color: rgba(60, 60, 60, 0.7);
+}
+
+.view-btn.active {
+  background-color: rgba(32, 178, 170, 0.4);
+  color: white;
+}
+
+.view-icon {
+  display: flex;
+  align-items: center;
+  font-size: 1.2rem;
+  opacity: 0.9;
+}
+
+.action-controls {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.elevator-btn {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  background-color: rgba(50, 50, 50, 0.5);
+  color: white;
+  transition: background-color 0.2s;
+  backdrop-filter: blur(10px);
+}
+
+.elevator-btn:hover {
+  background-color: rgba(60, 60, 60, 0.7);
+}
+
+.snapshot-btn {
+  background-color: rgba(32, 178, 170, 0.4);
+}
+
+.snapshot-btn:hover {
+  background-color: rgba(32, 178, 170, 0.6);
+} 

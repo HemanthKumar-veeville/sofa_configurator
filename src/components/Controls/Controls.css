@@ -1,0 +1,24 @@
+.controls-sidebar {
+  height: 80vh;
+  overflow-y: auto;
+  /* Ensure smooth scrolling */
+  scrollbar-width: thin;
+}
+
+/* For Webkit browsers (Chrome, Safari) */
+.controls-sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.controls-sidebar::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.controls-sidebar::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 3px;
+}
+
+.controls-sidebar::-webkit-scrollbar-thumb:hover {
+  background: #555;
+} 
