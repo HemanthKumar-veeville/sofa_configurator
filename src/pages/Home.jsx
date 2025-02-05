@@ -1,7 +1,7 @@
 import React from "react";
 import "./Home.css";
 import { useNavigate } from "react-router-dom";
-
+import arrow from "../assets/Arrow01.svg";
 const Home = () => {
   const navigate = useNavigate();
 
@@ -24,11 +24,7 @@ const Home = () => {
           <button className="configure-button" onClick={handleButtonClick}>
             CONFIGURE NOW
           </button>
-          <img
-            src="src/assets/Arrow01.svg"
-            alt="Arrow Mark"
-            className="arrow-mark"
-          />
+          <img src={arrow} alt="Arrow Mark" className="arrow-mark" />
         </div>
       </div>
     </div>
