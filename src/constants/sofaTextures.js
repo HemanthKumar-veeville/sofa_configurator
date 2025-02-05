@@ -17,26 +17,22 @@ export const sofaTextures = [
   },
   {
     name: "Pattern 2",
-    texture: white_fab,
-  },
-  {
-    name: "Pattern 3",
     texture: brown,
   },
   {
-    name: "Pattern 4",
+    name: "Pattern 3",
     texture: cream,
   },
   {
-    name: "Pattern 5",
+    name: "Pattern 4",
     texture: darkBrown,
   },
   {
-    name: "Pattern 6",
+    name: "Pattern 5",
     texture: red,
   },
   {
-    name: "Pattern 7",
+    name: "Pattern 6",
     texture: fabric,
   },
 ];

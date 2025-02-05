@@ -153,24 +153,33 @@ function CanvasContainer() {
     }
   };
 
-  const handleTakeSnapshot = () => {
-    if (screenshotTools) {
-      const { gl, scene, camera } = screenshotTools;
+  const handleTakeSnapshot = useCallback(
+    (returnDataUrl = false) => {
+      if (screenshotTools) {
+        const { gl, scene, camera } = screenshotTools;
 
-      // Render the scene
-      gl.render(scene, camera);
+        // Render the scene
+        gl.render(scene, camera);
 
-      // Get the canvas and create download
-      const canvas = gl.domElement;
-      const link = document.createElement("a");
+        // Get the canvas
+        const canvas = gl.domElement;
 
-      link.href = canvas.toDataURL("image/png", 1.0);
-      link.download = `elevator-snapshot-${Date.now()}.png`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }
-  };
+        if (returnDataUrl) {
+          return canvas.toDataURL("image/png", 1.0);
+        }
+
+        // Download the image if returnDataUrl is false
+        const link = document.createElement("a");
+        link.href = canvas.toDataURL("image/png", 1.0);
+        link.download = `sofa-snapshot-${Date.now()}.png`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+      return null;
+    },
+    [screenshotTools]
+  );
 
   const handleScreenshotTools = useCallback((tools) => {
     setScreenshotTools(tools);
@@ -238,7 +247,7 @@ function CanvasContainer() {
           <Environment preset="lobby" background={false} />
 
           {/* Room environment */}
-          <Room />
+          {/* <Room /> */}
 
           {/* Position elevator */}
           <group position={[0, 1, 5]} scale={[4.4, 4, 4]}>
@@ -253,6 +262,10 @@ function CanvasContainer() {
             onCeilingTextureChange={handleCeilingTextureChange}
             onSofaColorChange={handleSofaColorChange}
             onSofaTextureChange={handleSofaTextureChange}
+            currentFloorTexture={currentFloorTexture}
+            currentCeilingTexture={currentCeilingTexture}
+            currentSofaColor={currentSofaColor}
+            currentSofaTexture={currentSofaTexture}
           />
         </div>
         <ElevatorControls

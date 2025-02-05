@@ -3,26 +3,34 @@ import "./Home.css";
 import { useNavigate } from "react-router-dom";
 
 const Home = () => {
-    const navigate = useNavigate();
-
+  const navigate = useNavigate();
 
   const handleButtonClick = () => {
     navigate("/configurator");
-
   };
 
   return (
     <div className="home-container">
-      {/* Centered Button */}
-      <button className="configure-button" onClick={handleButtonClick}>
-        CONFIGURE NOW
-      </button>
-      {/* SVG Arrow Mark */}
-      <img
-        src="src/assets/Arrow01.svg" /* Path to your SVG */
-        alt="Arrow Mark"
-        className="arrow-mark"
-      />
+      {/* Video Section */}
+      <div className="video-section">
+        <video className="background-video" autoPlay loop muted playsInline>
+          <source
+            src="https://nusense.s3.us-east-1.amazonaws.com/nu3d/video/ac6db061-d0aa-4d39-a234-bf56cbe2e0d5.mp4"
+            type="video/mp4"
+          />
+          Your browser does not support the video tag.
+        </video>
+        <div className="content-overlay">
+          <button className="configure-button" onClick={handleButtonClick}>
+            CONFIGURE NOW
+          </button>
+          <img
+            src="src/assets/Arrow01.svg"
+            alt="Arrow Mark"
+            className="arrow-mark"
+          />
+        </div>
+      </div>
     </div>
   );
 };

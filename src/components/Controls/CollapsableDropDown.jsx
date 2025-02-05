@@ -76,14 +76,6 @@ const CollapsableDropDown = ({
   // Dropdown labels and content
   const dropdowns = [
     {
-      label: "Sofa Color",
-      content: sofaColors.map((color) => ({
-        name: color.name,
-        onClick: () => handleSofaColorSelection(color),
-      })),
-      selected: selectedSofaColor,
-    },
-    {
       label: "Sofa Texture",
       content: sofaTextures.map((texture) => ({
         name: texture.name,

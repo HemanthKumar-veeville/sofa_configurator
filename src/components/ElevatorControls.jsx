@@ -24,7 +24,6 @@ const ElevatorControls = ({
   const views = [
     { id: "isometric", label: "Isometric view", icon: <BsEyeFill /> },
     { id: "front", label: "Front View", icon: <BsGrid1X2 /> },
-    { id: "inside", label: "Inside View", icon: <BsEyeFill /> },
     { id: "scene", label: "Scene View", icon: <FaChartArea /> },
   ];
 
@@ -48,9 +47,6 @@ const ElevatorControls = ({
         ))}
       </div>
       <div className="action-controls">
-        <button className="elevator-btn" onClick={handleDoorToggle}>
-          {isDoorOpen ? "Close Door" : "Open Door"}
-        </button>
         <button className="elevator-btn snapshot-btn" onClick={onTakeSnapshot}>
           Take Snapshot
         </button>
