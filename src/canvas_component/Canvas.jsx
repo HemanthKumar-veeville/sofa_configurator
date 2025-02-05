@@ -18,6 +18,7 @@ import { floorTextures } from "../constants/floorTextures";
 import { ceilingTextures } from "../constants/ceilingTextures";
 import { Sofa } from "../Sofa";
 import { sofaColors } from "../constants/sofaColors";
+import * as THREE from "three";
 // Camera positions for different views
 const VIEW_CONFIGS = {
   isometric: {
@@ -118,6 +119,74 @@ function ScreenshotHandler({ onScreenshot }) {
   }, [gl, scene, camera, onScreenshot]);
 
   return null;
+}
+
+// Add this new component after the CameraController component
+function SpotLightWithLamp() {
+  const lightColor = "#FFD700"; // Warm yellow color
+
+  return (
+    <group position={[-3, 6, 2]}>
+      {/* Lamp base geometry */}
+      <mesh castShadow position={[0, 0, 0]}>
+        <cylinderGeometry args={[0.2, 0.3, 0.5]} />
+        <meshStandardMaterial color="#303030" />
+      </mesh>
+
+      {/* Light bulb geometry - much brighter */}
+      <mesh position={[0, -0.2, 0]}>
+        <sphereGeometry args={[0.2, 16, 16]} />
+        <meshBasicMaterial
+          color={lightColor}
+          emissive={lightColor}
+          emissiveIntensity={15}
+        />
+      </mesh>
+
+      {/* Light cone visualization - much more visible */}
+      <mesh position={[0, -0.3, 0]} rotation={[Math.PI, 0, 0]}>
+        <coneGeometry args={[3, 6, 32, 1, true]} />
+        <meshBasicMaterial
+          color={lightColor}
+          transparent={true}
+          opacity={0.6}
+          side={THREE.DoubleSide}
+          blending={THREE.AdditiveBlending}
+        />
+      </mesh>
+
+      {/* Spotlight - much stronger */}
+      <spotLight
+        castShadow
+        position={[0, -0.2, 0]}
+        angle={Math.PI / 4}
+        penumbra={0.1}
+        intensity={20}
+        distance={30}
+        decay={0.5}
+        color={lightColor}
+        shadow-mapSize-width={2048}
+        shadow-mapSize-height={2048}
+        shadow-bias={-0.0001}
+      />
+
+      {/* Light bulb glow effect - much stronger */}
+      <pointLight
+        intensity={10}
+        position={[0, -0.2, 0]}
+        color={lightColor}
+        distance={8}
+      />
+
+      {/* Additional glow lights for stronger effect */}
+      <pointLight
+        intensity={5}
+        position={[0, -1, 0]}
+        color={lightColor}
+        distance={10}
+      />
+    </group>
+  );
 }
 
 function CanvasContainer() {
@@ -228,30 +297,55 @@ function CanvasContainer() {
   return (
     <div id="canvas-container" ref={canvasRef}>
       <Suspense fallback={<LoadingScreen />}>
-        <Canvas shadows gl={{ preserveDrawingBuffer: true }}>
+        <Canvas
+          shadows
+          gl={{
+            preserveDrawingBuffer: true,
+            antialias: true,
+            shadowMap: { type: THREE.PCFSoftShadowMap },
+          }}
+        >
           <ScreenshotHandler onScreenshot={handleScreenshotTools} />
-
           <PerspectiveCamera makeDefault position={[0, 0, 4]} />
           <CameraController view={currentView} />
-
-          {/* Lighting setup */}
-          <ambientLight intensity={0.7} />
+          {/* Updated lighting setup */}
+          <ambientLight intensity={0.05} />
+          {/* Reduced ambient light intensity */}
+          {/* Main directional light */}
           <directionalLight
-            position={[2, 6, 8]}
-            intensity={0.8}
+            position={[4, 8, 4]}
+            intensity={0.1}
             castShadow
-            shadow-mapSize-width={1024}
-            shadow-mapSize-height={1024}
+            shadow-mapSize-width={2048}
+            shadow-mapSize-height={2048}
+            shadow-camera-far={50}
+            shadow-camera-left={-10}
+            shadow-camera-right={10}
+            shadow-camera-top={10}
+            shadow-camera-bottom={-10}
           />
-
+          {/* Adjust fog for better light beam visibility */}
+          <fog attach="fog" args={["#000000", 8, 30]} />
+          {/* Add the spotlight lamp */}
+          <SpotLightWithLamp />
           <Environment preset="lobby" background={false} />
-
-          {/* Room environment */}
-          {/* <Room /> */}
-
-          {/* Position elevator */}
+          {/* Add a ground plane to catch shadows */}
+          <mesh
+            rotation={[-Math.PI / 2, 0, 0]}
+            position={[0, -0.5, 0]}
+            receiveShadow
+          >
+            <planeGeometry args={[50, 50]} />
+            <shadowMaterial opacity={0.2} />
+          </mesh>
+          {/* Position sofa with shadow casting */}
           <group position={[0, 1, 5]} scale={[4.4, 4, 4]}>
-            <Sofa color={currentSofaColor} texture={currentSofaTexture} />
+            <Sofa
+              color={currentSofaColor}
+              texture={currentSofaTexture}
+              castShadow
+              receiveShadow
+            />
           </group>
         </Canvas>
 
