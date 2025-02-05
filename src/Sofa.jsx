@@ -4,30 +4,81 @@ Command: npx gltfjsx@6.5.3 .\src\assets\sofa.glb
 */
 
 import React, { useMemo } from "react";
-import { useGLTF } from "@react-three/drei";
+import { useGLTF, useTexture } from "@react-three/drei";
 import * as THREE from "three";
 import sofa from "./assets/sofa.glb";
 
-export function Sofa({ color = "original", ...props }) {
+export function Sofa({ color = "original", texture = null, ...props }) {
   const { nodes, materials } = useGLTF(sofa);
 
-  // Only modify material if color is not "original"
+  // Load texture if specified, with improved fabric handling
+  const loadedTexture = useMemo(() => {
+    if (!texture) return null;
+    try {
+      const tex = new THREE.TextureLoader().load(texture);
+
+      // Enhanced texture settings for seamless joining
+      tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+      tex.repeat.set(4, 4);
+      tex.offset.set(0, 0);
+
+      // Enable seamless texture joining
+      tex.generateMipmaps = true;
+      tex.minFilter = THREE.LinearMipmapLinearFilter;
+      tex.magFilter = THREE.LinearFilter;
+
+      // Prevent seams and improve quality
+      tex.anisotropy = 16;
+
+      // Make textures seamless at edges
+      tex.premultiplyAlpha = true;
+      tex.encoding = THREE.sRGBEncoding;
+
+      return tex;
+    } catch (error) {
+      console.error("Error loading texture:", error);
+      return null;
+    }
+  }, [texture]);
+
+  // Modified material with improved fabric handling
   const modifiedMaterial = useMemo(() => {
-    if (color === "original") {
+    if (color === "original" && !texture) {
       return nodes.geometry_0.material;
     }
 
-    const originalMaterial = nodes.geometry_0.material;
-    const newMaterial = originalMaterial.clone();
-
-    Object.assign(newMaterial, {
-      ...originalMaterial,
-      color: new THREE.Color(color),
-      blending: THREE.MultiplyBlending,
+    const newMaterial = new THREE.MeshStandardMaterial({
+      roughness: 0.8,
+      metalness: 0.0,
+      normalScale: new THREE.Vector2(1, 1),
+      normalMap: nodes.geometry_0.material.normalMap,
     });
 
+    // Always apply texture if available
+    if (loadedTexture) {
+      newMaterial.map = loadedTexture;
+      newMaterial.needsUpdate = true;
+
+      // Improve seams and edges
+      newMaterial.side = THREE.DoubleSide;
+      newMaterial.bumpScale = 0.05;
+      newMaterial.envMapIntensity = 0.8;
+
+      // Better UV handling for seams
+      newMaterial.map.offset.set(0, 0);
+      newMaterial.map.center.set(0.5, 0.5);
+      newMaterial.map.rotation = 0;
+      newMaterial.map.premultiplyAlpha = true;
+    }
+
+    // Apply color regardless of texture
+    // If color is "original", use white to show texture's original colors
+    newMaterial.color = new THREE.Color(
+      color === "original" ? 0xffffff : color
+    );
+
     return newMaterial;
-  }, [nodes.geometry_0.material, color]);
+  }, [nodes.geometry_0.material, color, loadedTexture]);
 
   return (
     <group {...props} dispose={null}>
@@ -35,6 +86,12 @@ export function Sofa({ color = "original", ...props }) {
         geometry={nodes.geometry_0.geometry}
         material={modifiedMaterial}
         rotation={[0, 0, 0]}
+        onBeforeRender={(renderer) => {
+          // Force proper mipmap generation for seamless textures
+          if (modifiedMaterial.map) {
+            renderer.setPixelRatio(window.devicePixelRatio);
+          }
+        }}
       />
     </group>
   );

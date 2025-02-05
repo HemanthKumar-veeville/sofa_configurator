@@ -3,11 +3,13 @@ import "./Controlls.css";
 import { floorTextures } from "../../constants/floorTextures";
 import { ceilingTextures } from "../../constants/ceilingTextures";
 import { sofaColors } from "../../constants/sofaColors";
+import { sofaTextures } from "../../constants/sofaTextures";
 
 const CollapsableDropDown = ({
   onFloorTextureChange,
   onCeilingTextureChange,
   onSofaColorChange,
+  onSofaTextureChange,
 }) => {
   // State to manage the visibility of dropdowns
   const [openDropdown, setOpenDropdown] = useState(null);
@@ -17,6 +19,9 @@ const CollapsableDropDown = ({
   );
   const [selectedSofaColor, setSelectedSofaColor] = useState(
     sofaColors[0].name
+  );
+  const [selectedSofaTexture, setSelectedSofaTexture] = useState(
+    sofaTextures[0].name
   );
 
   // Toggle the dropdown
@@ -48,9 +53,24 @@ const CollapsableDropDown = ({
 
   // Handle sofa color selection
   const handleSofaColorSelection = (color) => {
-    setSelectedSofaColor(color.name);
-    onSofaColorChange(color.color);
-    setOpenDropdown(null);
+    try {
+      setSelectedSofaColor(color.name);
+      onSofaColorChange(color.color);
+      setOpenDropdown(null);
+    } catch (error) {
+      console.error("Error selecting sofa color:", error);
+    }
+  };
+
+  // Handle sofa texture selection
+  const handleSofaTextureSelection = (texture) => {
+    try {
+      setSelectedSofaTexture(texture.name);
+      onSofaTextureChange(texture.texture);
+      setOpenDropdown(null);
+    } catch (error) {
+      console.error("Error selecting sofa texture:", error);
+    }
   };
 
   // Dropdown labels and content
@@ -63,8 +83,14 @@ const CollapsableDropDown = ({
       })),
       selected: selectedSofaColor,
     },
-    { label: "Texture", content: ["Option A", "Option B", "Option C"] },
-    { label: "Color", content: ["Choice 1", "Choice 2", "Choice 3"] },
+    {
+      label: "Sofa Texture",
+      content: sofaTextures.map((texture) => ({
+        name: texture.name,
+        onClick: () => handleSofaTextureSelection(texture),
+      })),
+      selected: selectedSofaTexture,
+    },
   ];
 
   return (
@@ -91,9 +117,9 @@ const CollapsableDropDown = ({
                   className={`dropdown-item ${
                     item.name === dropdown.selected ? "selected" : ""
                   }`}
-                  onClick={item.onClick || undefined}
+                  onClick={item.onClick}
                 >
-                  {item.name || item}
+                  {item.name}
                 </div>
               ))}
             </div>

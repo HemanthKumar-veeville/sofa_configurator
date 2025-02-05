@@ -1,8 +1,6 @@
 import React from "react";
 import CollapsableDropDown from "./CollapsableDropDown";
 import ActionButtons from "./ActionButtons";
-import HeaderDropdown from "./HeaderDropdown";
-import TabButtons from "./TabButtons";
 import "./Controls.css"; // Fixed typo in import
 import { floorTextures } from "../../constants/floorTextures";
 import { sofaColors } from "../../constants/sofaColors";
@@ -12,7 +10,16 @@ function Controls({
   onFloorTextureChange,
   onCeilingTextureChange,
   onSofaColorChange,
+  onSofaTextureChange,
 }) {
+  const handleSofaTextureChange = (texture) => {
+    // Reset color when texture is selected
+    if (texture) {
+      onSofaColorChange("original");
+    }
+    onSofaTextureChange(texture);
+  };
+
   return (
     <div className="controls-sidebar">
       {/* Header Section */}
@@ -29,6 +36,7 @@ function Controls({
             onFloorTextureChange={onFloorTextureChange}
             onCeilingTextureChange={onCeilingTextureChange}
             onSofaColorChange={onSofaColorChange}
+            onSofaTextureChange={handleSofaTextureChange}
           />
         </div>
 

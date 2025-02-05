@@ -133,6 +133,7 @@ function CanvasContainer() {
     ceilingTextures[0]
   );
   const [currentSofaColor, setCurrentSofaColor] = useState("original");
+  const [currentSofaTexture, setCurrentSofaTexture] = useState(null);
 
   const handleDoorToggle = useCallback((toggleFn) => {
     toggleDoorRef.current = toggleFn;
@@ -190,8 +191,29 @@ function CanvasContainer() {
   }, []);
 
   const handleSofaColorChange = useCallback((color) => {
-    console.log("Changing sofa color to:", color);
-    setCurrentSofaColor(color);
+    try {
+      console.log("Changing sofa color to:", color);
+      setCurrentSofaColor(color);
+      // Reset texture when color is changed
+      if (color !== "original") {
+        setCurrentSofaTexture(null);
+      }
+    } catch (error) {
+      console.error("Error changing sofa color:", error);
+    }
+  }, []);
+
+  const handleSofaTextureChange = useCallback((texture) => {
+    try {
+      console.log("Changing sofa texture to:", texture);
+      setCurrentSofaTexture(texture);
+      // Reset color when texture is applied
+      if (texture) {
+        setCurrentSofaColor("original");
+      }
+    } catch (error) {
+      console.error("Error changing sofa texture:", error);
+    }
   }, []);
 
   return (
@@ -220,7 +242,7 @@ function CanvasContainer() {
 
           {/* Position elevator */}
           <group position={[0, 1, 5]} scale={[4.4, 4, 4]}>
-            <Sofa color={currentSofaColor} />
+            <Sofa color={currentSofaColor} texture={currentSofaTexture} />
           </group>
         </Canvas>
 
@@ -230,6 +252,7 @@ function CanvasContainer() {
             onFloorTextureChange={handleFloorTextureChange}
             onCeilingTextureChange={handleCeilingTextureChange}
             onSofaColorChange={handleSofaColorChange}
+            onSofaTextureChange={handleSofaTextureChange}
           />
         </div>
         <ElevatorControls
