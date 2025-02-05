@@ -1,7 +1,8 @@
 import React from "react";
 import "./Home.css";
 import { useNavigate } from "react-router-dom";
-import arrow from "../assets/Arrow01.svg";
+import { BsArrowUpShort } from "react-icons/bs";
+
 const Home = () => {
   const navigate = useNavigate();
 
@@ -24,7 +25,7 @@ const Home = () => {
           <button className="configure-button" onClick={handleButtonClick}>
             CONFIGURE NOW
           </button>
-          <img src={arrow} alt="Arrow Mark" className="arrow-mark" />
+          <BsArrowUpShort className="arrow-mark" />
         </div>
       </div>
     </div>
