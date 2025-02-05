@@ -123,67 +123,107 @@ function ScreenshotHandler({ onScreenshot }) {
 
 // Add this new component after the CameraController component
 function SpotLightWithLamp() {
-  const lightColor = "#FFD700"; // Warm yellow color
+  const lightColor = "#FFD700"; // Base yellow color
+
+  // Create gradient texture for the beam
+  const gradientTexture = new THREE.CanvasTexture(
+    (() => {
+      const canvas = document.createElement("canvas");
+      canvas.width = 256;
+      canvas.height = 1;
+      const context = canvas.getContext("2d");
+      const gradient = context.createLinearGradient(0, 0, canvas.width, 0);
+      gradient.addColorStop(0, "rgba(255, 215, 0, 0.6)"); // More intense yellow at source
+      gradient.addColorStop(0.3, "rgba(255, 200, 0, 0.3)"); // Mid yellow
+      gradient.addColorStop(1, "rgba(255, 180, 0, 0.0)"); // Fade to transparent
+      context.fillStyle = gradient;
+      context.fillRect(0, 0, canvas.width, canvas.height);
+      return canvas;
+    })()
+  );
 
   return (
-    <group position={[-3, 6, 2]}>
-      {/* Lamp base geometry */}
+    <group position={[-2, 8, 2]} rotation={[0.4, 0.5, 0]}>
+      {/* Modern lamp housing */}
       <mesh castShadow position={[0, 0, 0]}>
-        <cylinderGeometry args={[0.2, 0.3, 0.5]} />
-        <meshStandardMaterial color="#303030" />
+        <cylinderGeometry args={[0.2, 0.3, 0.2]} />
+        <meshStandardMaterial color="#1a1a1a" metalness={0.8} roughness={0.2} />
       </mesh>
 
-      {/* Light bulb geometry - much brighter */}
-      <mesh position={[0, -0.2, 0]}>
-        <sphereGeometry args={[0.2, 16, 16]} />
+      {/* Light bulb geometry */}
+      <mesh position={[0, -0.1, 0]}>
+        <sphereGeometry args={[0.15, 32, 32]} />
         <meshBasicMaterial
           color={lightColor}
           emissive={lightColor}
-          emissiveIntensity={15}
+          emissiveIntensity={40}
         />
       </mesh>
 
-      {/* Light cone visualization - much more visible */}
-      <mesh position={[0, -0.3, 0]} rotation={[Math.PI, 0, 0]}>
-        <coneGeometry args={[3, 6, 32, 1, true]} />
-        <meshBasicMaterial
-          color={lightColor}
-          transparent={true}
-          opacity={0.6}
-          side={THREE.DoubleSide}
-          blending={THREE.AdditiveBlending}
-        />
-      </mesh>
+      {/* Gradient light beam - multiple layers for realistic effect */}
+      {[4, 3, 2].map((radius, index) => (
+        <mesh
+          key={`cone-${index}`}
+          position={[0, -0.2, 0]}
+          rotation={[0, 0, 0]}
+        >
+          <coneGeometry args={[radius, 12, 64, 1, false]} />
+          <meshBasicMaterial
+            map={gradientTexture}
+            transparent={true}
+            opacity={0.2 - index * 0.05}
+            side={THREE.DoubleSide}
+            blending={THREE.AdditiveBlending}
+            depthWrite={false}
+          />
+        </mesh>
+      ))}
 
-      {/* Spotlight - much stronger */}
+      {/* Main spotlight */}
       <spotLight
         castShadow
-        position={[0, -0.2, 0]}
-        angle={Math.PI / 4}
-        penumbra={0.1}
-        intensity={20}
-        distance={30}
-        decay={0.5}
+        position={[0, -0.1, 0]}
+        angle={Math.PI / 2.2}
+        penumbra={0.4}
+        intensity={120}
+        distance={25}
+        decay={1.5}
         color={lightColor}
         shadow-mapSize-width={2048}
         shadow-mapSize-height={2048}
         shadow-bias={-0.0001}
+        target-position={[0, -15, 0]}
       />
 
-      {/* Light bulb glow effect - much stronger */}
+      {/* Central bright glow */}
       <pointLight
-        intensity={10}
-        position={[0, -0.2, 0]}
+        intensity={30}
+        position={[0, -0.1, 0]}
         color={lightColor}
         distance={8}
       />
 
-      {/* Additional glow lights for stronger effect */}
-      <pointLight
-        intensity={5}
-        position={[0, -1, 0]}
+      {/* Subtle fill lights */}
+      <spotLight
+        position={[1.5, -0.1, 0]}
+        angle={Math.PI / 2.5}
+        penumbra={0.5}
+        intensity={40}
+        distance={20}
+        decay={1.5}
         color={lightColor}
-        distance={10}
+        target-position={[3, -15, 0]}
+      />
+
+      <spotLight
+        position={[-1.5, -0.1, 0]}
+        angle={Math.PI / 2.5}
+        penumbra={0.5}
+        intensity={40}
+        distance={20}
+        decay={1.5}
+        color={lightColor}
+        target-position={[-3, -15, 0]}
       />
     </group>
   );
@@ -309,12 +349,12 @@ function CanvasContainer() {
           <PerspectiveCamera makeDefault position={[0, 0, 4]} />
           <CameraController view={currentView} />
           {/* Updated lighting setup */}
-          <ambientLight intensity={0.05} />
+          <ambientLight intensity={0.01} />
           {/* Reduced ambient light intensity */}
           {/* Main directional light */}
           <directionalLight
             position={[4, 8, 4]}
-            intensity={0.1}
+            intensity={0.03}
             castShadow
             shadow-mapSize-width={2048}
             shadow-mapSize-height={2048}
@@ -325,7 +365,7 @@ function CanvasContainer() {
             shadow-camera-bottom={-10}
           />
           {/* Adjust fog for better light beam visibility */}
-          <fog attach="fog" args={["#000000", 8, 30]} />
+          <fog attach="fog" args={["#000000", 4, 30]} />
           {/* Add the spotlight lamp */}
           <SpotLightWithLamp />
           <Environment preset="lobby" background={false} />
